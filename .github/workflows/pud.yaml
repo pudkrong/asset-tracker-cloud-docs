@@ -1,0 +1,63 @@
+name: Playground zoomin
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - zoomin
+
+permissions:
+  packages: write
+  contents: write
+
+jobs:
+  build:
+    name: "Build the documentation"
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/upload-artifact@v3
+        with:
+          if-no-files-found: error
+          name: asset-tracker-docs-${{ github.sha }}
+          path: build/html/
+
+  publish:
+    name: Publish the documentation
+
+    runs-on: ubuntu-22.04
+
+    needs: [build]
+
+    env:
+      ACTIONS_STEP_DEBUG: true
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Determine documentation release
+        if: github.ref == 'refs/heads/saga'
+        run: |
+          git fetch --tags
+          RELEASE=`git describe --abbrev=0 --tags --always | tr -d '\n'`
+          VERSION=`git rev-parse --abbrev-ref HEAD | tr -d '\n'`
+          echo "VERSION=saga" >> $GITHUB_ENV
+          echo "RELEASE=$RELEASE" >> $GITHUB_ENV
+
+      - name: Determine documentation release (maintenance branches)
+        if: github.ref != 'refs/heads/saga'
+        run: |
+          echo "VERSION=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
+          echo "RELEASE=${{ github.sha }}" >> $GITHUB_ENV
+
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: asset-tracker-docs-${{ github.sha }}
+
+      - name: Debug
+        run: |
+          pwd
+          tree ${{ github.workspace }}/.github/artifacts/my-artifact
