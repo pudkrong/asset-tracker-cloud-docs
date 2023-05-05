@@ -28,5 +28,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh workflow run publish-docs-zoomin.yaml --field github_sha=${{ github.sha }} --field repo=${{ github.repository }} --field ref=${{ github.ref }} --ref ${{ github.ref }}
+          gh workflow run publish-docs-zoomin.yaml --field name=asset-tracker-docs-${{ github.sha }} --ref ${{ github.ref }}
 

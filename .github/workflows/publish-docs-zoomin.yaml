@@ -3,14 +3,8 @@ name: Publish documentation to Zoomin
 on:
   workflow_dispatch:
     inputs:
-      github_sha:
-        description: Github sha of artifact
-        required: true
-      repo:
-        description: Repository of artifact
-        required: true
-      ref:
-        description: Ref of artifact
+      name:
+        description: Artifact name to be published to Zoomin
         required: true
 
 permissions:
@@ -24,13 +18,8 @@ jobs:
 
     steps:
       - name: Download artifact
-        id: download
-        uses: actions/download-artifact@v3
-        with:
-          name: asset-tracker-docs-${{ github.event.inputs.github_sha }}
-          path: "artifact"
-          repo: ${{ github.event.inputs.repo }}
-          ref: ${{ github.event.inputs.ref }}
+        run: |
+          gh run download --name ${{ github.event.inputs.name }} --dir artifact
 
       - name: Install dependencies
         run: |
@@ -41,7 +30,8 @@ jobs:
           ZOOMIN_TITLE: ${{ vars.ZOOMIN_TITLE }}
           ZOOMIN_BOOK_TITLE: ${{ vars.ZOOMIN_BOOK_TITLE }}
         run: |
-          cd ${{ steps.download.outputs.download-path }}
+          tree .
+          cd artifact
           touch custom.properties
           NORMALIZED_ZOOMIN_TITLE=${ZOOMIN_TITLE:-nrf-asset-tracker}
           NORMALIZED_ZOOMIN_BOOK_TITLE=${ZOOMIN_BOOK_TITLE:-nRF Asset Tracker}
