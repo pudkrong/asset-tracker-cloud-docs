@@ -35,23 +35,6 @@ jobs:
       ACTIONS_STEP_DEBUG: true
 
     steps:
-      # - uses: actions/checkout@v3
-
-      # - name: Determine documentation release
-      #   if: github.ref == 'refs/heads/saga'
-      #   run: |
-      #     git fetch --tags
-      #     RELEASE=`git describe --abbrev=0 --tags --always | tr -d '\n'`
-      #     VERSION=`git rev-parse --abbrev-ref HEAD | tr -d '\n'`
-      #     echo "VERSION=saga" >> $GITHUB_ENV
-      #     echo "RELEASE=$RELEASE" >> $GITHUB_ENV
-
-      # - name: Determine documentation release (maintenance branches)
-      #   if: github.ref != 'refs/heads/saga'
-      #   run: |
-      #     echo "VERSION=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
-      #     echo "RELEASE=${{ github.sha }}" >> $GITHUB_ENV
-
       - name: Download artifact
         id: download
         uses: actions/download-artifact@v3
@@ -64,19 +47,39 @@ jobs:
           echo "download to ${{ steps.download.outputs.download-path }}"
           tree ${{ steps.download.outputs.download-path }}
 
+      - name: Install dependencies
+        run: |
+          sudo apt install -y sshpass
+
       - name: Add custom.properties and zip
         env:
-          ZOOMIN_TITLE: "asset_tracker_docs"
-          ZOOMIN_BOOK_TITLE: "nRF Asset Tracker SDK"
+          ZOOMIN_TITLE: ${{ vars.ZOOMIN_TITLE }}
+          ZOOMIN_BOOK_TITLE: ${{ vars.ZOOMIN_BOOK_TITLE }}
         run: |
           cd ${{ steps.download.outputs.download-path }}
           touch custom.properties
-          echo "manual.title=${ZOOMIN_TITLE// /_}" >> custom.properties
-          echo "booktitle=${ZOOMIN_BOOK_TITLE}" >> custom.properties
-          zip -r ../folder.zip .
+          NORMALIZED_ZOOMIN_TITLE=${ZOOMIN_TITLE:-nrf_asset_tracker}
+          NORMALIZED_ZOOMIN_BOOK_TITLE=${ZOOMIN_BOOK_TITLE:-nRF Asset Tracker}
+          echo "manual.title=${NORMALIZED_ZOOMIN_TITLE// /_}" >> custom.properties
+          echo "booktitle=${NORMALIZED_ZOOMIN_BOOK_TITLE}" >> custom.properties
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: zoomin-${{ github.sha }}
-          path: folder.zip
+          ZIP_FILENAME=${{ github.workspace }}/zoomin_nrf_asset_tracker_${{ github.sha }}.zip
+          echo "ZIP_FILENAME=${ZIP_FILENAME}" >> $GITHUB_ENV
+          zip -r -q ${{ env.ZIP_FILENAME }} .
+
+      - name: Upload Zoomin documentation
+        run: |
+          # Trust server
+          mkdir ~/.ssh
+          ssh-keyscan upload.zoominsoftware.io >> ~/.ssh/known_hosts
+
+          # Prepare key
+          echo "${{ secrets.ZOOMIN_KEY }}" | base64 -d > zoomin_key
+          chmod 600 zoomin_key
+
+          # Upload to Zoomin
+          sftp -v -i zoomin_key nordic@upload.zoominsoftware.io <<EOF
+          cd /nordic-be-dev.zoominsoftware.io/sphinx-html/incoming
+          put ${{ env.ZIP_FILENAME }}
+          quit
+          EOF
