@@ -25,6 +25,8 @@ jobs:
           path: build/html/
 
       - name: Trigger publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh workflow run publish-docs-zoomin.yaml --field github_sha=${{ github.sha }} --field repo=${{ github.repository }} --field ref=${{ github.ref }}
 
