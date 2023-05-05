@@ -53,21 +53,23 @@ jobs:
       #     echo "RELEASE=${{ github.sha }}" >> $GITHUB_ENV
 
       - name: Download artifact
+        id: download
         uses: actions/download-artifact@v2
         with:
           name: asset-tracker-docs-${{ github.sha }}
-          path: "${TMPDIR}/artifact"
+          path: "artifact"
 
       - name: Debug
         run: |
           pwd
-          echo "${TMPDIR}/artifact"
-          tree "${TMPDIR}/artifact"
+          echo "download to ${{ steps.download.outputs.download_path }}"
+          echo "download to ${{ steps.download.outputs.download-path }}"
+          echo "download to ${{ steps.download.outputs }}"
 
       - name: Zip folder
         uses: montudor/action-zip@v1
         with:
-          args: zip -qq -r folder.zip "${TMPDIR}/artifact"
+          args: zip -qq -r folder.zip ${{ steps.download.outputs.download_path }}
 
       - name: Debug2
         run: |
