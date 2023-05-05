@@ -65,7 +65,7 @@ jobs:
 
           ZIP_FILENAME=${{ github.workspace }}/zoomin_nrf_asset_tracker_${{ github.sha }}.zip
           echo "ZIP_FILENAME=${ZIP_FILENAME}" >> $GITHUB_ENV
-          zip -r -q ${{ env.ZIP_FILENAME }} .
+          zip -r -q "${ZIP_FILENAME}" .
 
       - name: Upload Zoomin documentation
         run: |
