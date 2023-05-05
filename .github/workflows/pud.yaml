@@ -60,4 +60,4 @@ jobs:
       - name: Debug
         run: |
           pwd
-          tree ${{ github.workspace }}/.github/artifacts/my-artifact
+          tree ${{ github.workspace }}/asset-tracker-cloud-docs
