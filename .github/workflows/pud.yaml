@@ -59,15 +59,16 @@ jobs:
           name: asset-tracker-docs-${{ github.sha }}
           path: "artifact"
 
-      - name: Debug
+      - name: Print download folder
         run: |
-          pwd
           echo "download to ${{ steps.download.outputs.download-path }}"
 
       - name: Zip folder
         run: |
           zip -r folder.zip ${{ steps.download.outputs.download-path }}/
 
-      - name: Debug2
-        run: |
-          tree
+      - name: Upload artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: zoomin-${{ github.sha }}
+          path: folder.zip
