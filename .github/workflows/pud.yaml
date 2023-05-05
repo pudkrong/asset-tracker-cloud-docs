@@ -65,9 +65,9 @@ jobs:
           tree "${TMPDIR}/artifact"
 
       - name: Zip folder
-        uses: montudor/action-zip@v0.2.0
+        uses: montudor/action-zip@v1
         with:
-          args: zip -r folder.zip "${TMPDIR}/artifact"
+          args: zip -qq -r folder.zip "${TMPDIR}/artifact"
 
       - name: Debug2
         run: |
