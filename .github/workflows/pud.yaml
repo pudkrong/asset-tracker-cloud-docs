@@ -35,22 +35,22 @@ jobs:
       ACTIONS_STEP_DEBUG: true
 
     steps:
-      - uses: actions/checkout@v3
+      # - uses: actions/checkout@v3
 
-      - name: Determine documentation release
-        if: github.ref == 'refs/heads/saga'
-        run: |
-          git fetch --tags
-          RELEASE=`git describe --abbrev=0 --tags --always | tr -d '\n'`
-          VERSION=`git rev-parse --abbrev-ref HEAD | tr -d '\n'`
-          echo "VERSION=saga" >> $GITHUB_ENV
-          echo "RELEASE=$RELEASE" >> $GITHUB_ENV
+      # - name: Determine documentation release
+      #   if: github.ref == 'refs/heads/saga'
+      #   run: |
+      #     git fetch --tags
+      #     RELEASE=`git describe --abbrev=0 --tags --always | tr -d '\n'`
+      #     VERSION=`git rev-parse --abbrev-ref HEAD | tr -d '\n'`
+      #     echo "VERSION=saga" >> $GITHUB_ENV
+      #     echo "RELEASE=$RELEASE" >> $GITHUB_ENV
 
-      - name: Determine documentation release (maintenance branches)
-        if: github.ref != 'refs/heads/saga'
-        run: |
-          echo "VERSION=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
-          echo "RELEASE=${{ github.sha }}" >> $GITHUB_ENV
+      # - name: Determine documentation release (maintenance branches)
+      #   if: github.ref != 'refs/heads/saga'
+      #   run: |
+      #     echo "VERSION=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
+      #     echo "RELEASE=${{ github.sha }}" >> $GITHUB_ENV
 
       - name: Download artifact
         uses: actions/download-artifact@v2
@@ -60,4 +60,4 @@ jobs:
       - name: Debug
         run: |
           pwd
-          tree ${{ github.workspace }}/asset-tracker-cloud-docs
+          tree ${{ github.workspace }}
