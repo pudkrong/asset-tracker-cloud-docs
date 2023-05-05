@@ -7,8 +7,8 @@ on:
       - zoomin
 
 permissions:
-  packages: write
   contents: write
+  actions: write
 
 jobs:
   build:
@@ -24,62 +24,7 @@ jobs:
           name: asset-tracker-docs-${{ github.sha }}
           path: build/html/
 
-  publish:
-    name: Publish the documentation
-
-    runs-on: ubuntu-22.04
-
-    needs: [build]
-
-    env:
-      ACTIONS_STEP_DEBUG: true
-
-    steps:
-      - name: Download artifact
-        id: download
-        uses: actions/download-artifact@v3
-        with:
-          name: asset-tracker-docs-${{ github.sha }}
-          path: "artifact"
-
-      - name: Print download folder
+      - name: Trigger publish
         run: |
-          echo "download to ${{ steps.download.outputs.download-path }}"
-          tree ${{ steps.download.outputs.download-path }}
+          gh workflow run publish-docs-zoomin.yaml --field github_sha=${{ github.sha }} --field repo=${{ github.repository }} --field ref=${{ github.ref }}
 
-      - name: Install dependencies
-        run: |
-          sudo apt install -y sshpass
-
-      - name: Add custom.properties and zip
-        env:
-          ZOOMIN_TITLE: ${{ vars.ZOOMIN_TITLE }}
-          ZOOMIN_BOOK_TITLE: ${{ vars.ZOOMIN_BOOK_TITLE }}
-        run: |
-          cd ${{ steps.download.outputs.download-path }}
-          touch custom.properties
-          NORMALIZED_ZOOMIN_TITLE=${ZOOMIN_TITLE:-nrf_asset_tracker}
-          NORMALIZED_ZOOMIN_BOOK_TITLE=${ZOOMIN_BOOK_TITLE:-nRF Asset Tracker}
-          echo "manual.title=${NORMALIZED_ZOOMIN_TITLE// /_}" >> custom.properties
-          echo "booktitle=${NORMALIZED_ZOOMIN_BOOK_TITLE}" >> custom.properties
-
-          ZIP_FILENAME=${{ github.workspace }}/zoomin_nrf_asset_tracker_${{ github.sha }}.zip
-          echo "ZIP_FILENAME=${ZIP_FILENAME}" >> $GITHUB_ENV
-          zip -r -q "${ZIP_FILENAME}" .
-
-      - name: Upload Zoomin documentation
-        run: |
-          # Trust server
-          mkdir ~/.ssh
-          ssh-keyscan upload.zoominsoftware.io >> ~/.ssh/known_hosts
-
-          # Prepare key
-          echo "${{ secrets.ZOOMIN_KEY }}" | base64 -d > zoomin_key
-          chmod 600 zoomin_key
-
-          # Upload to Zoomin
-          sftp -v -i zoomin_key nordic@upload.zoominsoftware.io <<EOF
-          cd /nordic-be-dev.zoominsoftware.io/sphinx-html/incoming
-          put ${{ env.ZIP_FILENAME }}
-          quit
-          EOF

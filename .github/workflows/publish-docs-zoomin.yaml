@@ -3,8 +3,14 @@ name: Publish documentation to Zoomin
 on:
   workflow_dispatch:
     inputs:
-      commit:
-        description: Commit hash you want to deploy
+      github_sha:
+        description: Github sha of artifact
+        required: true
+      repo:
+        description: Repository of artifact
+        required: true
+      ref:
+        description: Ref of artifact
         required: true
 
 permissions:
@@ -23,6 +29,8 @@ jobs:
         with:
           name: asset-tracker-docs-${{ github.event.inputs.commit }}
           path: "artifact"
+          repo: ${{ github.event.inputs.repo }}
+          ref: ${{ github.event.inputs.ref }}
 
       - name: Install dependencies
         run: |
