@@ -65,10 +65,9 @@ jobs:
           echo "download to ${{ steps.download.outputs.download-path }}"
 
       - name: Zip folder
-        uses: montudor/action-zip@v1
-        with:
-          args: zip -qq -r folder.zip ${{ steps.download.outputs.download-path }}
+        run: |
+          zip -r folder.zip ${{ steps.download.outputs.download-path }}/
 
       - name: Debug2
         run: |
-          ls -la
+          tree
