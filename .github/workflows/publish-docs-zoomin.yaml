@@ -33,20 +33,23 @@ jobs:
 
       - name: Add custom.properties and zip
         env:
-          ZOOMIN_TITLE: ${{ vars.ZOOMIN_TITLE }}
-          ZOOMIN_BOOK_TITLE: ${{ vars.ZOOMIN_BOOK_TITLE }}
+          ZOOMIN_TITLE: ${{ vars.ZOOMIN_TITLE || nrf-asset-tracker }}
+          ZOOMIN_BOOK_TITLE: ${{ vars.ZOOMIN_BOOK_TITLE || nRF Asset Tracker }}
         run: |
-          ls -l ${{ env.DOWNLOAD_DIR }}
           cd ${{ env.DOWNLOAD_DIR }}
           touch custom.properties
-          NORMALIZED_ZOOMIN_TITLE=${ZOOMIN_TITLE:-nrf-asset-tracker}
-          NORMALIZED_ZOOMIN_BOOK_TITLE=${ZOOMIN_BOOK_TITLE:-nRF Asset Tracker}
-          echo "manual.title=${NORMALIZED_ZOOMIN_TITLE// /_}" >> custom.properties
-          echo "booktitle=${NORMALIZED_ZOOMIN_BOOK_TITLE}" >> custom.properties
+          echo "manual.title=${ZOOMIN_TITLE// /_}" >> custom.properties
+          echo "booktitle=${ZOOMIN_BOOK_TITLE}" >> custom.properties
 
           ZIP_FILENAME=${{ github.workspace }}/zoomin_nrf_asset_tracker_${{ github.sha }}.zip
           echo "ZIP_FILENAME=${ZIP_FILENAME}" >> $GITHUB_ENV
           zip -r -q "${ZIP_FILENAME}" .
+
+      - uses: actions/upload-artifact@v3
+        with:
+          if-no-files-found: error
+          name: ${{ env.ZIP_FILENAME }}
+          path: ${{ env.ZIP_FILENAME }}
 
       - name: Upload Zoomin documentation
         run: |
