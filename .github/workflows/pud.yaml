@@ -62,10 +62,18 @@ jobs:
       - name: Print download folder
         run: |
           echo "download to ${{ steps.download.outputs.download-path }}"
+          tree ${{ steps.download.outputs.download-path }}
 
-      - name: Zip folder
+      - name: Add custom.properties and zip
+        env:
+          ZOOMIN_TITLE: "asset_tracker_docs"
+          ZOOMIN_BOOK_TITLE: "nRF Asset Tracker SDK"
         run: |
-          zip -r folder.zip ${{ steps.download.outputs.download-path }}/
+          cd ${{ steps.download.outputs.download-path }}
+          touch custom.properties
+          echo "manual.title=${ZOOMIN_TITLE// /_}" >> custom.properties
+          echo "booktitle=${ZOOMIN_BOOK_TITLE}" >> custom.properties
+          zip -r ../folder.zip .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
