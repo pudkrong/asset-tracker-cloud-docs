@@ -54,7 +54,7 @@ jobs:
 
       - name: Download artifact
         id: download
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: asset-tracker-docs-${{ github.sha }}
           path: "artifact"
@@ -68,7 +68,7 @@ jobs:
           zip -r folder.zip ${{ steps.download.outputs.download-path }}/
 
       - name: Upload artifact
-        uses: actions/download-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: zoomin-${{ github.sha }}
           path: folder.zip
