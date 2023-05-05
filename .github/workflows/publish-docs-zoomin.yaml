@@ -23,7 +23,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh run download --name ${{ github.event.inputs.name }} --dir artifact
+          DOWNLOAD_DIR=$(openssl rand -hex 8)
+          echo "DOWNLOAD_DIR=${DOWNLOAD_DIR}" >> $GITHUB_ENV
+          gh run download --name ${{ github.event.inputs.name }} --dir "${DOWNLOAD_DIR}"
 
       - name: Install dependencies
         run: |
@@ -34,8 +36,8 @@ jobs:
           ZOOMIN_TITLE: ${{ vars.ZOOMIN_TITLE }}
           ZOOMIN_BOOK_TITLE: ${{ vars.ZOOMIN_BOOK_TITLE }}
         run: |
-          tree .
-          cd artifact
+          ls -l ${{ env.DOWNLOAD_DIR }}
+          cd ${{ env.DOWNLOAD_DIR }}
           touch custom.properties
           NORMALIZED_ZOOMIN_TITLE=${ZOOMIN_TITLE:-nrf-asset-tracker}
           NORMALIZED_ZOOMIN_BOOK_TITLE=${ZOOMIN_BOOK_TITLE:-nRF Asset Tracker}
