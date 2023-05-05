@@ -27,7 +27,7 @@ jobs:
         id: download
         uses: actions/download-artifact@v3
         with:
-          name: asset-tracker-docs-${{ github.event.inputs.commit }}
+          name: asset-tracker-docs-${{ github.event.inputs.github_sha }}
           path: "artifact"
           repo: ${{ github.event.inputs.repo }}
           ref: ${{ github.event.inputs.ref }}
