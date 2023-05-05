@@ -56,8 +56,19 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: asset-tracker-docs-${{ github.sha }}
+          path: "${TMPDIR}/artifact"
 
       - name: Debug
         run: |
           pwd
-          tree ${{ github.workspace }}
+          echo "${TMPDIR}/artifact"
+          tree "${TMPDIR}/artifact"
+
+      - name: Zip folder
+        uses: montudor/action-zip@v0.2.0
+        with:
+          args: zip -r folder.zip "${TMPDIR}/artifact"
+
+      - name: Debug2
+        run: |
+          ls -la
