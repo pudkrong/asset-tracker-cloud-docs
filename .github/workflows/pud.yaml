@@ -62,14 +62,12 @@ jobs:
       - name: Debug
         run: |
           pwd
-          echo "download to ${{ steps.download.outputs.download_path }}"
           echo "download to ${{ steps.download.outputs.download-path }}"
-          echo "download to ${{ steps.download.outputs }}"
 
       - name: Zip folder
         uses: montudor/action-zip@v1
         with:
-          args: zip -qq -r folder.zip ${{ steps.download.outputs.download_path }}
+          args: zip -qq -r folder.zip ${{ steps.download.outputs.download-path }}
 
       - name: Debug2
         run: |
