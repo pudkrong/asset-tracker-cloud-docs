@@ -17,11 +17,14 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
+      - name: Init git
+        run: |
+          git init --bare
+
       - name: Download artifact
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git init --bare
           gh run download --name ${{ github.event.inputs.name }} --dir artifact
 
       - name: Install dependencies
