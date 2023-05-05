@@ -48,7 +48,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           if-no-files-found: error
-          name: ${{ env.ZIP_FILENAME }}
+          name: zoomin_nrf_asset_tracker
           path: ${{ env.ZIP_FILENAME }}
 
       - name: Upload Zoomin documentation
