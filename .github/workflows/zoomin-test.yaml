@@ -1,0 +1,33 @@
+name: Test to Zoomin
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish the documentation
+
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt install -y sshpass
+
+      - name: Upload Zoomin documentation
+        env:
+          ZOOMIN_SFTP_SERVER:
+            ${{ vars.ZOOMIN_SFTP_SERVER || 'upload-v1.zoominsoftware.io' }}
+        run: |
+          # Trust server
+          mkdir ~/.ssh
+          ssh-keyscan ${ZOOMIN_SFTP_SERVER} >> ~/.ssh/known_hosts
+
+          # Prepare key
+          echo "${{ secrets.ZOOMIN_KEY }}" | base64 -d > zoomin_key
+          chmod 600 zoomin_key
