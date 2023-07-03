@@ -31,3 +31,11 @@ jobs:
           # Prepare key
           echo "${{ secrets.ZOOMIN_KEY }}" | base64 -d > zoomin_key
           chmod 600 zoomin_key
+
+          # Echo
+          echo "${ZOOMIN_SFTP_SERVER}"
+
+          # Upload to Zoomin
+          sftp -v -i zoomin_key nordic@${ZOOMIN_SFTP_SERVER} <<EOF
+          quit
+          EOF
