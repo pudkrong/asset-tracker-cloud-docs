@@ -6,6 +6,9 @@ on:
       name:
         description: Artifact name to be published to Zoomin
         required: true
+      version:
+        description: If provided, it will be suffixed to title
+        required: false
 
 permissions:
   contents: write
@@ -36,7 +39,11 @@ jobs:
           ZOOMIN_TITLE: ${{ vars.ZOOMIN_TITLE || 'nrf-asset-tracker' }}
           ZOOMIN_BOOK_TITLE:
             ${{ vars.ZOOMIN_BOOK_TITLE || 'nRF Asset Tracker' }}
+          ZOOMIN_DOCS_VERSION: ${{ github.event.inputs.version }}
         run: |
+          [[ -n "$ZOOMIN_DOCS_VERSION" ]] && ZOOMIN_TITLE="${ZOOMIN_TITLE}-${ZOOMIN_DOCS_VERSION}"
+          [[ -n "$ZOOMIN_DOCS_VERSION" ]] && ZOOMIN_BOOK_TITLE="${ZOOMIN_BOOK_TITLE} (${ZOOMIN_DOCS_VERSION})"
+
           cd ${{ env.DOWNLOAD_DIR }}
           touch custom.properties
           echo "manual.name=${ZOOMIN_TITLE// /_}" >> custom.properties
