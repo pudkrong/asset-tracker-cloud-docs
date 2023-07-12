@@ -70,7 +70,7 @@ jobs:
 
           # Upload to Zoomin
           sftp -v -i zoomin_key nordic@${ZOOMIN_SFTP_SERVER} <<EOF
-          cd /nordic-be-dev.zoominsoftware.io/sphinx-html/incoming
+          cd nordic-be-dev.zoominsoftware.io/sphinx-html/incoming
           put ${{ env.ZIP_FILENAME }}
           quit
           EOF

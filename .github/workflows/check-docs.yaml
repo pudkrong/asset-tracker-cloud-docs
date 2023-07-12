@@ -93,6 +93,7 @@ jobs:
 
           echo "${{ github.ref }} | ${{ github.ref_name }}"
           echo "GITREF=${GITHUB_REF}"
+          echo "GITHUB_HEAD_REF=${GITHUB_HEAD_REF}"
           echo "branch => ${BRANCH_NAME}"
 
           gh workflow run publish-docs-zoomin.yaml --field name=asset-tracker-docs-${{ github.sha }} --field version="${{ github.event.pull_request.title }}" --ref review-zoomin
