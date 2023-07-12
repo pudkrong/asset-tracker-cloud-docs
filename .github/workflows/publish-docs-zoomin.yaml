@@ -44,6 +44,9 @@ jobs:
           [[ -n "$ZOOMIN_DOCS_VERSION" ]] && ZOOMIN_TITLE="${ZOOMIN_TITLE}-${ZOOMIN_DOCS_VERSION}"
           [[ -n "$ZOOMIN_DOCS_VERSION" ]] && ZOOMIN_BOOK_TITLE="${ZOOMIN_BOOK_TITLE} (${ZOOMIN_DOCS_VERSION})"
 
+          echo "ZOOMIN_TITLE=${ZOOMIN_TITLE}"
+          echo "ZOOMIN_BOOK_TITLE=${ZOOMIN_BOOK_TITLE}"
+
           cd ${{ env.DOWNLOAD_DIR }}
           touch custom.properties
           echo "manual.name=${ZOOMIN_TITLE// /_}" >> custom.properties
