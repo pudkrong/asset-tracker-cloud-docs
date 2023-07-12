@@ -49,6 +49,8 @@ jobs:
           touch custom.properties
           echo "manual.name=${NORMALIZED_ZOOMIN_TITLE}" >> custom.properties
           echo "booktitle=${ZOOMIN_BOOK_TITLE}" >> custom.properties
+
+          echo "custom.properties"
           cat custom.properties
 
           ZIP_FILENAME=${{ github.workspace }}/zoomin_nrf_asset_tracker_${{ github.sha }}.zip
