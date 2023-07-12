@@ -90,7 +90,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BRANCH_NAME=${GITHUB_REF##*/}
-          gh workflow run publish-docs-zoomin.yaml --field name=asset-tracker-docs-${{ github.sha }} --field version="${{ github.event.pull_request.title }}" --ref ${BRANCH_NAME}
+          echo "branch => ${BRANCH_NAME}"
+          gh workflow run publish-docs-zoomin.yaml --field name=asset-tracker-docs-${{ github.sha }} --field version="${{ github.event.pull_request.title }}" --ref review-zoomin
 
   test:
     runs-on: ubuntu-22.04
