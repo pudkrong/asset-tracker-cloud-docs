@@ -21,7 +21,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Determine Docker image name and tag
         id: docker-image-tag
@@ -62,7 +62,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull Docker image
         run: |
@@ -84,6 +84,12 @@ jobs:
           if-no-files-found: error
           name: asset-tracker-docs-${{ github.sha }}
           path: build/html/
+
+      - name: Trigger publish docs zoomin workflow
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run publish-docs-zoomin.yaml --field name=asset-tracker-docs-${{ github.sha }} --field version=${{ github.ref }} --ref ${{ github.ref }}
 
   test:
     runs-on: ubuntu-22.04
