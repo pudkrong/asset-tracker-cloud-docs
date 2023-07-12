@@ -89,7 +89,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh workflow run publish-docs-zoomin.yaml --field name=asset-tracker-docs-${{ github.sha }} --field version=${{ github.ref }} --ref ${{ github.ref }}
+          gh workflow run publish-docs-zoomin.yaml --field name=asset-tracker-docs-${{ github.sha }} --field version=${{ github.event.pull_request.title }} --ref ${GITHUB_REF##*/}
 
   test:
     runs-on: ubuntu-22.04
